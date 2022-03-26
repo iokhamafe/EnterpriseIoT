@@ -1,0 +1,109 @@
+##### Router 1 #####
+
+configure terminal
+int fa0/0
+ip add 10.0.0.1 255.255.255.128
+no shut
+exit
+int fa0/1
+ip add 10.0.0.129 255.255.255.128
+no shut
+exit
+int s2/0
+ip add 10.3.0.1 255.255.255.0
+no shut
+exit
+
+ip route 10.2.2.0 255.255.255.0 s2/0
+ip route 10.2.2.0 255.255.255.128 s2/0
+end
+
+show ip route
+
+...
+S       10.2.2.0/25 is directly connected, Serial2/0
+S       10.2.2.0/24 is directly connected, Serial2/0
+C       10.0.0.0/25 is directly connected, FastEthernet0/0
+C       10.0.0.128/25 is directly connected, FastEthernet0/1
+
+show ip int br
+
+Interface                  IP-Address      OK? Method Status                Protocol
+FastEthernet0/0            10.0.0.1        YES manual up                    up
+FastEthernet0/1            10.0.0.129      YES manual up                    up
+
+
+##### Router 2 #####
+
+configure terminal
+int fa0/0
+ip add 10.2.2.1 255.255.255.128
+no shut
+exit
+int fa0/1
+ip add 10.2.2.129 255.255.255.128
+no shut
+exit
+int s2/0
+ip add 10.3.0.2 255.255.255.0
+no shut
+exit
+
+ip route 10.0.0.0 255.255.255.0 s2/0
+ip route 10.0.0.0 255.255.255.128 s2/0
+end
+
+show ip route
+
+...
+C       10.2.2.0/25 is directly connected, FastEthernet0/0
+S       10.0.0.0/25 is directly connected, Serial2/0
+S       10.0.0.0/24 is directly connected, Serial2/0
+C       10.2.2.128/25 is directly connected, FastEthernet0/1
+
+show ip int br
+
+Interface                  IP-Address      OK? Method Status                Protocol
+FastEthernet0/0            10.2.2.1        YES manual up                    up
+FastEthernet0/1            10.2.2.129      YES manual up                    up
+
+
+##### PC1 #####
+ip 10.0.0.2/255.255.255.128 10.0.0.1
+show ip
+
+NAME        : PC1[1]
+IP/MASK     : 10.0.0.2/25
+GATEWAY     : 10.0.0.1
+
+##### PC2 #####
+ip 10.0.0.3/255.255.255.128 10.0.0.1
+show ip
+
+NAME        : PC2[1]
+IP/MASK     : 10.0.0.3/25
+GATEWAY     : 10.0.0.1
+
+##### PC3 #####
+ip 10.0.0.130/255.255.255.128 10.0.0.129
+show ip
+
+NAME        : PC3[1]
+IP/MASK     : 10.0.0.130/25
+GATEWAY     : 10.0.0.129
+
+##### PC4 #####
+ip 10.2.2.2/255.255.255.128 10.2.2.1
+show ip
+
+NAME        : PC4[1]
+IP/MASK     : 10.2.2.2/25
+GATEWAY     : 10.2.2.1
+
+##### PC5 #####
+ip 10.2.2.130/255.255.255.128 10.2.2.129
+show ip
+
+NAME        : PC5[1]
+IP/MASK     : 10.2.2.130/25
+GATEWAY     : 10.2.2.129
